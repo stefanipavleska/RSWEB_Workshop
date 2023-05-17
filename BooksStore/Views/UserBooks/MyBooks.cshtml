@@ -1,0 +1,74 @@
+﻿@model IEnumerable<BooksStore.Models.Book>
+
+@{
+    ViewData["Title"] = "MyBooks";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>MyBooks</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                    @Html.DisplayNameFor(model => model.FrontPage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.YearPublished)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DownloadUrl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Author)
+            </th>
+            <th>
+                Add Review
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <img src="~/images/@item.FrontPage" height="300" width="150">
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.YearPublished)
+                </td>
+                <td>
+                    <form asp-controller="Books" asp-action="DownloadFile">
+                        <input name="Url" type="hidden" value="@item.DownloadUrl" />
+                        <input type="submit" value="Download pdf" />
+                    </form>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author.FullName)
+                </td>
+                <td>
+                    <a asp-controller="Reviews" asp-action="PostReviewUserLogged" asp-route-knigaid="@item.Id">Add review</a>
+                </td>
+                <td>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    }
+                    |
+                    <a asp-action="Details" asp-controller="Books" asp-route-id="@item.Id">Details</a> |
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
